@@ -10,6 +10,8 @@ Core ML supports many machine learning models (neural networks, tree ensembles, 
 
 In our example, we will use a famous model, the [VGG16](https://arxiv.org/abs/1409.1556), which is used to classify images, and luckily for us it is one of the pre-trained models that are available in [Core ML](https://developer.apple.com/machine-learning/).
 
+⚠️ Important: if you actually wanna implement a computer vision application, maybe you should check the new [Vision framework](https://developer.apple.com/documentation/vision). What we wanna show in this post is how you can use a pretrained model in order to make your apps more powerful with machine learning.
+
 ## Downloading the model
 
 In our example, we will use a model that is already available in the `.mlmodel` format. However if you have your model trained in a different framework such as Keras, for example, you can use %%%% to convert it to the appropriate format.
@@ -172,7 +174,7 @@ If you have any suggestions, please let us know.
 
 Also, if you wanna share how you've been planning to use Core ML in your app, we'd be glad to hear your ideas!
 
--
+-------
 
 1 See [Integrating a Core ML Model into Your App](https://developer.apple.com/documentation/coreml/integrating_a_core_ml_model_into_your_app)
 
