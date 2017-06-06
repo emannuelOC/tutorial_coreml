@@ -93,7 +93,7 @@ If you have any suggestions, please let us know.
 Also, if you wanna share how you've been planning to use Core ML in your app, we'd be glad to hear 
 your ideas!
 
--
+----------
 
 1 See [Integrating a Core ML Model into Your App](https://developer.apple.com/documentation/coreml/integrating_a_core_ml_model_into_your_app)
 
