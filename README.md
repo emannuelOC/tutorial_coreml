@@ -10,18 +10,18 @@ Core ML supports many machine learning models (neural networks, tree ensembles, 
 
 In our example, we will use a famous model, the [VGG16](https://arxiv.org/abs/1409.1556), which is used to classify images, and luckily for us it is one of the pre-trained models that are available in [Core ML](https://developer.apple.com/machine-learning/).
 
-⚠️ Important: if you actually wanna implement a computer vision application, maybe you should check the new [Vision framework](https://developer.apple.com/documentation/vision). What we wanna show in this post is how you can use a pretrained model in order to make your apps more powerful with machine learning.
+⚠️ Important: if you want to implement a computer vision application, you should check the new [Vision framework](https://developer.apple.com/documentation/vision). What we want to show in this post is how you can use a pre-trained model to make your apps more powerful with machine learning.
 
 ## Downloading the model
 
-In our example, we will use a model that is already available in the `.mlmodel` format. However if you have your model trained in a different framework such as Keras, for example, you can use %%%% to convert it to the appropriate format.
+In our example, we will use a model that is already available in the `.mlmodel` format. However, if you have your model trained in a different framework such as Keras, for example, you can use %%%% to convert it to the appropriate format.
 For our tutorial, you can download the VGG model [here](https://docs-assets.developer.apple.com/coreml/models/VGG16.mlmodel).<sup>2</sup>
 
-After downloading the `.mlmodel` file, you can add it to your project simply by dropping it along side your files.
+After downloading the `.mlmodel` file, you can add it to your project simply by dropping it alongside your files.
 
 ## App setup
 
-The app we will create in our example is quite simple. It has an image view that will display the image to be classified, a bar button that the user can tap in order to choose another picture and a label that will show the classification given by the model.
+The app we will create in our example is quite simple. It has an image view that will display the image to be classified, a bar button that the user can tap to choose another picture and a label that will show the classification given by the model.
 
 When the user taps the "+" button, we present an Action Sheet with the "Library" and "Camera" options. After choosing one of them, the image picker controller is presented. 
 
@@ -58,7 +58,7 @@ func takePicture() {
 }
 ```
 
-The image picker delegate methods are really straightforward. In the `didCancel` we simply call `dismiss()`. In the `didFinishWithMediaType`, we get the image from the `info` dictionary and pass it to our `classify(image: UIImage)` method.
+The `UIImagePickerDelegate` methods are very straightforward. In the `didCancel` we simply call `dismiss()`. In the `didFinishWithMediaType`, we get the image from the `info` dictionary and pass it to our `classify(image: UIImage)` method.
 
 ```swift
 func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -113,12 +113,12 @@ func pixelBufferFromImage(image: UIImage) -> CVPixelBuffer {
     var pxbuffer: CVPixelBuffer?
     var status = CVPixelBufferCreate(kCFAllocatorDefault, width, height,
                                      kCVPixelFormatType_32BGRA, options, &pxbuffer)
-    status = CVPixelBufferLockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0));
+    status = CVPixelBufferLockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0))
     
-    let bufferAddress = CVPixelBufferGetBaseAddress(pxbuffer!);
+    let bufferAddress = CVPixelBufferGetBaseAddress(pxbuffer!)
     
     
-    let rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
     let bytesperrow = CVPixelBufferGetBytesPerRow(pxbuffer!)
     let context = CGContext(data: bufferAddress,
                             width: width,
@@ -126,24 +126,24 @@ func pixelBufferFromImage(image: UIImage) -> CVPixelBuffer {
                             bitsPerComponent: 8,
                             bytesPerRow: bytesperrow,
                             space: rgbColorSpace,
-                            bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue);
+                            bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue)
     context?.concatenate(CGAffineTransform(rotationAngle: 0))
     context?.concatenate(__CGAffineTransformMake( 1, 0, 0, -1, 0, CGFloat(height) )) //Flip Vertical
     
     
     
-    context?.draw(cgimage!, in: CGRect(x:0, y:0, width:CGFloat(width), height:CGFloat(height)));
-    status = CVPixelBufferUnlockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0));
-    return pxbuffer!;
+    context?.draw(cgimage!, in: CGRect(x:0, y:0, width:CGFloat(width), height:CGFloat(height)))
+    status = CVPixelBufferUnlockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0))
+    return pxbuffer!
     
 }
 ```
 
 ## The "Core ML" part 
 
-Once we have the image data in a `CVPixelBuffer` we can pass it to our model and the code could not be simpler.
+Once we have the image data in a `CVPixelBuffer`, we can pass it to our model and the code could not be simpler.
 
-In order to do that, we will create our `VGG16` model in `viewDidLoad()` and in our `classify()` method, all we need to do is call `prediction()` on our model. The method will return a `VGG16Output` from which you can take a `classLabel` property that is a string. 
+To do that, we will create our `VGG16` model in `viewDidLoad()` and in our `classify()` method, all we need to do is call `prediction()` in our model. The method will return a `VGG16Output` from which you can take a `classLabel` property that is a string. 
 
 ```swift
 
@@ -168,14 +168,14 @@ func classify(image: UIImage) {
 
 ## Finally
 
-Well, as you can see, the Core ML framework is a very powerful and easy to use tool to make our apps more intelligent. You can think of all the crazy ideas that Natural Language Processing, Computer Vision and other amazing areas can allow your apps to do.
+Well, as you can see, the Core ML framework is a very powerful and easy to use tool to make our apps more intelligent. You can think of all the crazy ideas that Natural Language Processing, Computer Vision, and other amazing areas can allow your apps to do.
 
 If you have any suggestions, please let us know.
 
-Also, if you wanna share how you've been planning to use Core ML in your app, we'd be glad to hear your ideas!
+Also, if you want to share how you've been planning to use Core ML in your app, we'd be glad to hear your ideas!
 
 -------
 
 1 See [Integrating a Core ML Model into Your App](https://developer.apple.com/documentation/coreml/integrating_a_core_ml_model_into_your_app)
 
-2 There will be a post on that soon! WWDC is crazy right now so when we find some time to play around with keras and Core ML together we will most certainly share the results here.
+2 There will be a post on that soon! WWDC is crazy right now so when we find some time to play around with Keras and Core ML together we will most certainly share the results here.
